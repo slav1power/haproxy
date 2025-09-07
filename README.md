@@ -6,7 +6,8 @@
 ### Задание 1
 
 
-![alt text]([http://url/to/img.png](https://github.com/slav1power/zabbix1/blob/main/img/1.png)
+`При необходимости прикрепитe сюда скриншоты
+![Название скриншота 1]([ссылка на скриншот 1](https://github.com/slav1power/zabbix1/blob/main/img/1.png))`
 
 использовались команды из лекции к занятию
 ### Задание 2
