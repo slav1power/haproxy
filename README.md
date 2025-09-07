@@ -7,6 +7,7 @@
 
 
 ![alt text](https://github.com/slav1power/zabbix1/blob/main/img/1.png)
+Скриншот Веб-интерфейса
 
 использовались команды из лекции к занятию
 ### Задание 2
