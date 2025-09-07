@@ -7,7 +7,7 @@
 
 
 `При необходимости прикрепитe сюда скриншоты
-![Название скриншота 1]([https://github.com/slav1power/zabbix1/blob/main/img/1.png])`
+![Название скриншота 1](https://github.com/slav1power/zabbix1/blob/main/img/1.png)`
 
 использовались команды из лекции к занятию
 ### Задание 2
