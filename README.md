@@ -157,7 +157,7 @@ listen web_tcp
 
 ```
 
-![alt text](https://github.com/slav1power/haproxy/blob/main/img/2.png)
+![alt text](https://github.com/slav1power/haproxy/blob/main/img/22.png)
 
 Проверка балансировки и попытка обратится без хоста в конце
 
