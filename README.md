@@ -76,7 +76,7 @@ listen web_tcp
 
 ```
 
- ![alt text](https://github.com/slav1power/zabbix1/blob/main/img/1.png)
+ ![alt text](https://github.com/slav1power/haproxy/blob/main/img/1.png)
 
 Балансировка по TCP
 
