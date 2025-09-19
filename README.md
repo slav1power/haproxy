@@ -1,165 +1,77 @@
-# Домашнее задание к занятию 2 «Кластеризация и балансировка нагрузки» - `Уляшев Дима`
+# Домашнее задание к занятию 3 «Резервное копирование» - `Уляшев Дима`
 
 
 
 
 ### Задание 1
-Конфиг haproxy:
-
-```
-global
-        log /dev/log    local0
-        log /dev/log    local1 notice
-        chroot /var/lib/haproxy
-        stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
-        stats timeout 30s
-        user haproxy
-        group haproxy
-        daemon
-
-        # Default SSL material locations
-        ca-base /etc/ssl/certs
-        crt-base /etc/ssl/private
-
-        # See: https://ssl-config.mozilla.org/#server=haproxy&server-version=2.0.3&config=intermediate
-        ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256>
-        ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA>
-        ssl-default-bind-options ssl-min-ver TLSv1.2 no-tls-tickets
-
-defaults
-        log     global
-        mode    http
-        option  httplog
-        option  dontlognull
-        timeout connect 5000
-        timeout client  50000
-        timeout server  50000
-        errorfile 400 /etc/haproxy/errors/400.http
-        errorfile 403 /etc/haproxy/errors/403.http
-        errorfile 408 /etc/haproxy/errors/408.http
-        errorfile 500 /etc/haproxy/errors/500.http
-        errorfile 502 /etc/haproxy/errors/502.http
-        errorfile 503 /etc/haproxy/errors/503.http
-        errorfile 504 /etc/haproxy/errors/504.http
-
-listen stats  # веб-страница со статистикой
-        bind                    :888
-        mode                    http
-        stats                   enable
-        stats uri               /stats
-        stats refresh           5s
-        stats realm             Haproxy\ Statistics
-
-frontend example  # секция фронтенд
-        mode http
-        bind :8088
-        #default_backend web_servers
-        acl ACL_example.com hdr(host) -i example.com
-        use_backend web_servers if ACL_example.com
-
-backend web_servers    # секция бэкенд
-        mode http
-        balance roundrobin
-        option httpchk
-        http-check send meth GET uri /index.html
-        server s1 127.0.0.1:8888 check
-        server s2 127.0.0.1:9999 check
 
 
-listen web_tcp
+ ![alt text](https://github.com/slav1power/haproxy/blob/main/img/1r.png)
 
-        bind :1325
-
-        server s1 127.0.0.1:8888 check inter 3s
-        server s2 127.0.0.1:9999 check inter 3s
-
-
-```
-
- ![alt text](https://github.com/slav1power/haproxy/blob/main/img/1.png)
-
-Балансировка по TCP
+Результат резервного копирования
 
 
 
 ### Задание 2
 
-Конфиг haproxy:
+файл crontab:
 
 ```
-global
-        log /dev/log    local0
-        log /dev/log    local1 notice
-        chroot /var/lib/haproxy
-        stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
-        stats timeout 30s
-        user haproxy
-        group haproxy
-        daemon
+  GNU nano 7.2                                /tmp/crontab.SuWjAM/crontab                                         
+# Edit this file to introduce tasks to be run by cron.
+# 
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+# 
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').
+# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+0 2 * * * /home/dimidrol/rsync.sh
 
-        # Default SSL material locations
-        ca-base /etc/ssl/certs
-        crt-base /etc/ssl/private
-
-        # See: https://ssl-config.mozilla.org/#server=haproxy&server-version=2.0.3&config=intermediate
-        ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256>
-        ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA>
-        ssl-default-bind-options ssl-min-ver TLSv1.2 no-tls-tickets
-
-defaults
-        log     global
-        mode    http
-        option  httplog
-        option  dontlognull
-        timeout connect 5000
-        timeout client  50000
-        timeout server  50000
-        errorfile 400 /etc/haproxy/errors/400.http
-        errorfile 403 /etc/haproxy/errors/403.http
-        errorfile 408 /etc/haproxy/errors/408.http
-        errorfile 500 /etc/haproxy/errors/500.http
-        errorfile 502 /etc/haproxy/errors/502.http
-        errorfile 503 /etc/haproxy/errors/503.http
-        errorfile 504 /etc/haproxy/errors/504.http
-
-listen stats  # веб-страница со статистикой
-        bind                    :888
-        mode                    http
-        stats                   enable
-        stats uri               /stats
-        stats refresh           5s
-        stats realm             Haproxy\ Statistics
-
-frontend example  # секция фронтенд
-        mode http
-        bind :8088
-        #default_backend web_servers
-        acl ACL_example.com hdr(host) -i example.com
-        use_backend web_servers if ACL_example.com
-
-backend web_servers    # секция бэкенд
-        mode http
-        balance roundrobin
-        option httpchk
-        http-check send meth GET uri /index.html
-        server s1 127.0.0.1:8888 check weight 2
-        server s2 127.0.0.1:9999 check weight 3
-        server s3 127.0.0.1:8889 check weight 4
-
-
-listen web_tcp
-
-        bind :1325
-
-        server s1 127.0.0.1:8888 check inter 3s
-        server s2 127.0.0.1:9999 check inter 3s
 
 
 ```
 
-![alt text](https://github.com/slav1power/haproxy/blob/main/img/22.png)
+файл rsync.sh
 
-Проверка балансировки и попытка обратится без хоста в конце
+```
+  #!/bin/bash
+
+log_message() {
+    logger -t "$LOG_TAG" "$1"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1"
+}
+
+if rsync -avh --delete --checksum --exclude='.*/' --exclude='.*' . /tmp/dackup/ > /tmp/backup.log 2>&1; then
+    log_message "Backup completed successfully"
+    exit 0
+else
+    ERROR_MSG=$(tail -n 5 /tmp/backup.log)
+    log_message "ERROR: Backup failed. Last error: $ERROR_MSG"
+    exit 1
+fi
+
+
+```
+
+![alt text](https://github.com/slav1power/haproxy/blob/main/img/2r.png)
+
+Результат выполнения скрипта
 
 
 
